@@ -68,10 +68,12 @@ else()
     message(STATUS "Using local SDL3_ttf")
 endif()
 
-add_executable(Breakout WIN32 src/main.cpp)
+add_executable(Breakout WIN32 src/main.cpp
+        src/GameObject.cpp
+        src/Engine.cpp)
 
 # set the include directory
-target_include_directories(Breakout PUBLIC ${SDL3_INCLUDE_DIRS} ${SDL3_TTF_INCLUDE_DIRS})
+target_include_directories(Breakout PUBLIC api ${SDL3_INCLUDE_DIRS} ${SDL3_TTF_INCLUDE_DIRS})
 
 target_compile_definitions(Breakout PRIVATE SDL_MAIN_USE_CALLBACKS)
 

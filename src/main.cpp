@@ -4,8 +4,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+
 const float PADDLE_SPEED = 5.0f;
 const float BALL_SPEED_X = 4.0f;
 const float BALL_SPEED_Y = -4.0f;
@@ -18,54 +17,6 @@ const float BRICK_HEIGHT = 20;
 const float BRICK_SPACING = 8;
 const float BRICK_OFFSET_X = 25;
 const float BRICK_OFFSET_Y = 50;
-
-struct GameObject
-{
-    SDL_FRect rect;  // SDL_FRect pozwala na bardziej precyzyjne pozycjonowanie
-    SDL_Color color;
-    float vx = 0, vy = 0; // Dodajemy prędkość
-
-    void render(SDL_Renderer *renderer)
-    {
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-        SDL_RenderFillRect(renderer, &rect);
-    }
-
-    void move()
-    {
-        rect.x += vx;
-        rect.y += vy;
-    }
-};
-
-struct Brick
-{
-    SDL_FRect rect;
-    SDL_Color color;
-    bool active = true; // Flaga, czy cegiełka nadal istnieje
-
-    void render(SDL_Renderer *renderer)
-    {
-        if (active)
-        {
-            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-            SDL_RenderFillRect(renderer, &rect);
-        }
-    }
-};
-
-struct Bonus
-{
-    SDL_FRect rect;
-    SDL_Color color;
-    int type;
-
-    void render(SDL_Renderer *renderer)
-    {
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-        SDL_RenderFillRect(renderer, &rect);
-    }
-};
 
 int main()
 {
