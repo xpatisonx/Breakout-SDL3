@@ -70,7 +70,8 @@ endif()
 
 add_executable(Breakout WIN32 src/main.cpp
         src/GameObject.cpp
-        src/Engine.cpp)
+        src/Engine.cpp
+        src/Level.cpp)
 
 # set the include directory
 target_include_directories(Breakout PUBLIC api ${SDL3_INCLUDE_DIRS} ${SDL3_TTF_INCLUDE_DIRS})

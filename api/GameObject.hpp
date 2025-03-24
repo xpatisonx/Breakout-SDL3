@@ -7,6 +7,9 @@
 
 #include <SDL3/SDL.h>
 #include <array>
+#include <vector>
+#include <memory>
+#include <map>
 
 constexpr float PADDLE_SPEED = 5.0f;
 constexpr float BALL_SPEED_X = 4.0f;
@@ -30,21 +33,20 @@ enum class ObjectType : int
 class iGameObject
 {
 public:
-    virtual void render(SDL_Renderer *render);
-    virtual void set_speed(Speed speed);
-    virtual void move();
+    virtual void render(SDL_Renderer *render) = 0;
+    virtual void set_speed(Speed speed) = 0;
+    virtual void move() = 0;
+    virtual ObjectType get_type() = 0;
 };
 
 class GameObject : public iGameObject
 {
 public:
-    GameObject(SDL_FRect rectangle, SDL_Color color, ObjectType type, Speed speed);
-
+    explicit GameObject(SDL_FRect rectangle, SDL_Color color, ObjectType type, Speed speed = {0,0});
     void render(SDL_Renderer *renderer) override;
-
     void set_speed(Speed new_speed) override;
-
     void move() override;
+    ObjectType get_type() override;
 
 private:
     SDL_FRect rect;
@@ -77,6 +79,20 @@ public:
     Bonus(SDL_FRect rectangle);
 private:
     BonusType bonus_type;
+};
+
+using ObjectContainerType = std::map<ObjectType, std::vector<std::unique_ptr<GameObject>>>;
+
+class ObjectContainer
+{
+public:
+    ObjectContainer();
+    void add_object(std::unique_ptr<GameObject> object);
+    void render_everything(SDL_Renderer *renderer);
+    GameObject get_player;
+
+private:
+    ObjectContainerType container;
 };
 
 #endif //BREAKOUT_GAMEOBJECT_HPP

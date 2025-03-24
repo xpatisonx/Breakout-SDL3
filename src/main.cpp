@@ -3,74 +3,80 @@
 #include <vector>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
+#include <Engine.hpp>
 
+//
+//const float PADDLE_SPEED = 5.0f;
+//const float BALL_SPEED_X = 4.0f;
+//const float BALL_SPEED_Y = -4.0f;
+//const float BONUS_SPEED = 4.0f;
 
-const float PADDLE_SPEED = 5.0f;
-const float BALL_SPEED_X = 4.0f;
-const float BALL_SPEED_Y = -4.0f;
-const float BONUS_SPEED = 4.0f;
-
-const int BRICK_ROWS = 5;
-const int BRICK_COLS = 10;
-const float BRICK_WIDTH = 68;
-const float BRICK_HEIGHT = 20;
-const float BRICK_SPACING = 8;
-const float BRICK_OFFSET_X = 25;
-const float BRICK_OFFSET_Y = 50;
+//const int BRICK_ROWS = 5;
+//const int BRICK_COLS = 10;
+//const float BRICK_WIDTH = 68;
+//const float BRICK_HEIGHT = 20;
+//const float BRICK_SPACING = 8;
+//const float BRICK_OFFSET_X = 25;
+//const float BRICK_OFFSET_Y = 50;
 
 int main()
 {
+    Engine eng;
+    eng.run();
+    return 0;
+
+#ifdef IGNORE
     /////////////////////////////////////////
     ///   Inicjalizacja
     /////////////////////////////////////////
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-
-    SDL_Window *window = SDL_CreateWindow("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-    if (!window)
-    {
-        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return 1;
-    }
-
-    // Tworzymy renderer w SDL3 - brak flag, tylko nazwa
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, nullptr);
-    if (!renderer)
-    {
-        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
+//    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+//    {
+//        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+//        return 1;
+//    }
+//
+//    SDL_Window *window = SDL_CreateWindow("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+//    if (!window)
+//    {
+//        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+//        SDL_Quit();
+//        return 1;
+//    }
+//
+//    // Tworzymy renderer w SDL3 - brak flag, tylko nazwa
+//    SDL_Renderer *renderer = SDL_CreateRenderer(window, nullptr);
+//    if (!renderer)
+//    {
+//        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+//        SDL_DestroyWindow(window);
+//        SDL_Quit();
+//        return 1;
+//    }
 
     /////////////////////////////////////////
     ///   Dodawanie obiektów
     /////////////////////////////////////////
 
-    // Dodawanie obiektów gry
-    GameObject paddle = {{350, 550, 100, 20},
-                         {255, 255, 255, 255}};
-    GameObject ball = {{390, 530, 20, 20}, {255, 0, 0, 255}, BALL_SPEED_X, BALL_SPEED_Y};
-    std::vector<Brick> bricks;
-    for (int row = 0; row < BRICK_ROWS; ++row)
-    {
-        for (int col = 0; col < BRICK_COLS; ++col)
-        {
-            bricks.push_back({
-                                     {BRICK_OFFSET_X + col * (BRICK_WIDTH + BRICK_SPACING),
-                                             BRICK_OFFSET_Y + row * (BRICK_HEIGHT + BRICK_SPACING),
-                                                  BRICK_WIDTH, BRICK_HEIGHT},
-                                     {200,   200, 0,           255} // Żółty kolor
-                             });
-        }
-    }
+//    // Dodawanie obiektów gry
+//    GameObject paddle = {{350, 550, 100, 20},
+//                         {255, 255, 255, 255}};
+//    GameObject ball = {{390, 530, 20, 20}, {255, 0, 0, 255}, BALL_SPEED_X, BALL_SPEED_Y};
+//    std::vector<Brick> bricks;
+//    for (int row = 0; row < BRICK_ROWS; ++row)
+//    {
+//        for (int col = 0; col < BRICK_COLS; ++col)
+//        {
+//            bricks.push_back({
+//                                     {BRICK_OFFSET_X + col * (BRICK_WIDTH + BRICK_SPACING),
+//                                             BRICK_OFFSET_Y + row * (BRICK_HEIGHT + BRICK_SPACING),
+//                                                  BRICK_WIDTH, BRICK_HEIGHT},
+//                                     {200,   200, 0,           255} // Żółty kolor
+//                             });
+//        }
+//    }
 
-    std::vector<Bonus> bonuses{};
+//    std::vector<Bonus> bonuses{};
 
     /////////////////////////////////////////
     ///   Interface
@@ -308,9 +314,10 @@ int main()
         SDL_Delay(16);  // ~60 FPS
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    TTF_CloseFont(font);
+//    SDL_DestroyRenderer(renderer);
+//    SDL_DestroyWindow(window);
+//    SDL_Quit();
+//    TTF_CloseFont(font);
     return 0;
+#endif
 }

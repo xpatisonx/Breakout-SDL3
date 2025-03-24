@@ -11,20 +11,26 @@
 #include <memory>
 #include <map>
 #include <vector>
-
-using ObjectContainerType = std::map<ObjectType, std::vector<std::unique_ptr<iGameObject>>>; //todo: zrobić klasę opakowującą ten kontener;
+#include <Level.hpp>
 
 class Engine
 {
 public:
     Engine();
-
+    void run();
     bool init_sdl(std::string &message);
-
-    bool init_level();
+    bool init_level(std::size_t number);
+    void main_loop();
+    void render();
+    void destroy();
 
 private:
-    ObjectContainerType object_container; //todo:
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    ObjectContainer object_container;
+    std::array<std::unique_ptr<iLevel>, 1> levels;
+    bool running;
+    SDL_Event event;
 };
 
 #endif //BREAKOUT_ENGINE_HPP

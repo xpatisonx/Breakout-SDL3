@@ -4,11 +4,12 @@
 
 #include <Engine.hpp>
 #include <iostream>
+#include <GameObject.hpp>
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
-Engine::Engine()
+Engine::Engine() : object_container(), levels()
 {
     std::string message;
     if (!init_sdl(message))
@@ -16,7 +17,10 @@ Engine::Engine()
         std::cerr << message << std::endl;
         return;
     }
-    if (!init_level())
+
+    levels[0] = std::make_unique<Level1>();
+
+    if (!init_level(0))
     {
         std::cerr << "Coult not initialize level." << std::endl;
         return;
@@ -31,7 +35,7 @@ bool Engine::init_sdl(std::string& message)
         return false;
     }
 
-    SDL_Window *window = SDL_CreateWindow("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    window = SDL_CreateWindow("Breakout", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     if (!window)
     {
         message = "Window could not be created! SDL_Error: " + std::string(SDL_GetError());
@@ -40,7 +44,7 @@ bool Engine::init_sdl(std::string& message)
     }
 
     // Tworzymy renderer w SDL3 - brak flag, tylko nazwa
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, nullptr);
+    renderer = SDL_CreateRenderer(window, nullptr);
     if (!renderer)
     {
         message = "Renderer could not be created! SDL_Error: " + std::string(SDL_GetError());
@@ -48,9 +52,65 @@ bool Engine::init_sdl(std::string& message)
         SDL_Quit();
         return false;
     }
+    return true;
 }
 
-bool Engine::init_level()
+bool Engine::init_level(std::size_t number)
 {
+    levels[number]->load_level(object_container);
+    return true;
+}
 
+void Engine::render()
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    object_container.render_everything(renderer);
+    SDL_RenderPresent(renderer);
+}
+
+void Engine::destroy()
+{
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+//    TTF_CloseFont(font);
+}
+
+void Engine::main_loop()
+{
+    while(running)
+    {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                running = false;
+            }
+            else if (event.type == SDL_EVENT_KEY_DOWN)
+            {
+                if (event.key.key == SDLK_LEFT)
+                {
+                    moveLeft = true;
+                }
+                else if (event.key.key == SDLK_RIGHT)
+                {
+                    moveRight = true;
+                }
+                else if (event.key.key == SDLK_SPACE and life > 0 and ball.vx == 0 and ball.vy == 0)
+                {
+                    ball.vx = BALL_SPEED_X;
+                    ball.vy = BALL_SPEED_Y;
+                }
+            }
+        }
+        render();
+        SDL_Delay(16);  // ~60 FPS
+    }
+}
+
+void Engine::run()
+{
+    running = true;
+    main_loop();
 }
