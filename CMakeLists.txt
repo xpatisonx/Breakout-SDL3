@@ -1,33 +1,3 @@
-#cmake_minimum_required(VERSION 3.20)
-#project(Breakout LANGUAGES CXX)
-#
-#set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#
-## Ścieżka do SDL3
-#set(SDL3_DIR ${CMAKE_SOURCE_DIR}/external/SDL3)
-#
-## Wymuś budowanie statycznej wersji SDL3
-#set(SDL_SHARED OFF CACHE BOOL "Build SDL3 as a shared library" FORCE)
-#set(SDL_STATIC ON CACHE BOOL "Build SDL3 as a static library" FORCE)
-#set(SDL_TEST OFF CACHE BOOL "Disable SDL3 tests" FORCE)
-#set(SDL_HIDAPI OFF CACHE BOOL "Disable HIDAPI support" FORCE)
-#set(SDL_IME OFF CACHE BOOL "Disable IME support" FORCE)
-#
-## Dodaj SDL3 do projektu
-#add_subdirectory(${SDL3_DIR} external/SDL3_build EXCLUDE_FROM_ALL)
-#
-#add_executable(Breakout src/main.cpp)
-#target_link_libraries(Breakout PRIVATE SDL3-static)
-#
-#
-#if (MINGW)
-#    target_link_libraries(Breakout PRIVATE mingw32)
-#    target_link_options(Breakout PRIVATE -static -static-libgcc -static-libstdc++)
-#else ()
-#    target_link_options(my_game PRIVATE -static)
-#endif()
-
 cmake_minimum_required(VERSION 3.20)
 project(Breakout LANGUAGES CXX)
 
@@ -59,7 +29,7 @@ else()
     message(STATUS "Using local SDL3")
 endif()
 
-# add SDL2_ttf support
+# add SDL3_ttf support
 find_package(SDL3_ttf QUIET)
 if (NOT SDL3_ttf_FOUND)
     message(STATUS "Getting SDL3_ttf from Github")
@@ -74,7 +44,7 @@ add_executable(Breakout WIN32 src/main.cpp
         src/Level.cpp)
 
 # set the include directory
-target_include_directories(Breakout PUBLIC api ${SDL3_INCLUDE_DIRS} ${SDL3_TTF_INCLUDE_DIRS})
+target_include_directories(Breakout PUBLIC ${SDL3_INCLUDE_DIRS} ${SDL3_TTF_INCLUDE_DIRS} PRIVATE api)
 
 target_compile_definitions(Breakout PRIVATE SDL_MAIN_USE_CALLBACKS)
 

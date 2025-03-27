@@ -34,32 +34,58 @@ class iGameObject
 {
 public:
     virtual void render(SDL_Renderer *render) = 0;
+
     virtual void set_speed(Speed speed) = 0;
+
     virtual void move() = 0;
+
     virtual ObjectType get_type() = 0;
 };
 
 class GameObject : public iGameObject
 {
 public:
-    explicit GameObject(SDL_FRect rectangle, SDL_Color color, ObjectType type, Speed speed = {0,0});
+    explicit GameObject(SDL_FRect rectangle, SDL_Color color, ObjectType type, Speed speed = {0, 0});
+
     void render(SDL_Renderer *renderer) override;
     void set_speed(Speed new_speed) override;
     void move() override;
+
     ObjectType get_type() override;
 
-private:
+protected:
     SDL_FRect rect;
     SDL_Color color;
     Speed speed;
     ObjectType type;
 };
 
+enum class MoveDirection : int
+{
+    none = 0,
+    left = 1,
+    right = 2
+};
+
+class Paddle : public GameObject
+{
+public:
+    Paddle(SDL_FRect rectangle, SDL_Color color, float speed);
+
+    void set_move_direction(MoveDirection direction);
+    void move() override;
+
+private:
+    MoveDirection move_direction;
+};
+
 class Brick : public GameObject
 {
 public:
     Brick(SDL_FRect rectangle, SDL_Color color);
+
     void render(SDL_Renderer *renderer) override;
+
 private:
     bool active;
 };
@@ -70,29 +96,42 @@ enum class BonusType : int
     narrowing
 };
 
-constexpr SDL_Color BonusColors[]{{0,   200, 200},
-                                  {200, 0,   0}};
+constexpr SDL_Color BonusColors[]{
+    {0, 200, 200},
+    {200, 0, 0}
+};
 
 class Bonus : public GameObject
 {
 public:
     Bonus(SDL_FRect rectangle);
+
 private:
     BonusType bonus_type;
 };
 
-using ObjectContainerType = std::map<ObjectType, std::vector<std::unique_ptr<GameObject>>>;
+using ObjectContainerVec = std::vector<std::unique_ptr<GameObject> >;
+using ObjectContainerMap = std::map<ObjectType, ObjectContainerVec>;
 
 class ObjectContainer
 {
 public:
     ObjectContainer();
+    void init();
+
     void add_object(std::unique_ptr<GameObject> object);
     void render_everything(SDL_Renderer *renderer);
-    GameObject get_player;
+    void move_everything();
+
+    //todo: poprawić, żeby było dobrze
+    Paddle *get_player();
+    GameObject *get_ball();
 
 private:
-    ObjectContainerType container;
+    ObjectContainerMap container{};
+    Paddle *player;
+    GameObject *ball;
+    std::array<ObjectType, 3> movable{ObjectType::paddle, ObjectType::none, ObjectType::bonus};
 };
 
 #endif //BREAKOUT_GAMEOBJECT_HPP

@@ -13,6 +13,9 @@
 #include <vector>
 #include <Level.hpp>
 
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
 class Engine
 {
 public:
@@ -31,6 +34,10 @@ private:
     std::array<std::unique_ptr<iLevel>, 1> levels;
     bool running;
     SDL_Event event;
+
+    void keyboard_event(const SDL_Event& event);
+    void move();
+    void wait();
 };
 
 #endif //BREAKOUT_ENGINE_HPP

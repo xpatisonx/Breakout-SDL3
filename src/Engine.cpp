@@ -6,9 +6,6 @@
 #include <iostream>
 #include <GameObject.hpp>
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-
 Engine::Engine() : object_container(), levels()
 {
     std::string message;
@@ -27,7 +24,7 @@ Engine::Engine() : object_container(), levels()
     }
 }
 
-bool Engine::init_sdl(std::string& message)
+bool Engine::init_sdl(std::string &message)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -74,38 +71,59 @@ void Engine::destroy()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-//    TTF_CloseFont(font);
+    //    TTF_CloseFont(font);
+}
+
+void Engine::keyboard_event(const SDL_Event &event)
+{
+    Paddle *player = object_container.get_player();
+
+    if (event.type == SDL_EVENT_KEY_DOWN)
+    {
+        if (event.key.key == SDLK_LEFT)
+        {
+            player->set_move_direction(MoveDirection::left);
+        } else if (event.key.key == SDLK_RIGHT)
+        {
+            player->set_move_direction(MoveDirection::right);
+        }
+    } else if (event.type == SDL_EVENT_KEY_UP)
+    {
+        if (event.key.key == SDLK_LEFT)
+        {
+            player->set_move_direction(MoveDirection::none);
+        } else if (event.key.key == SDLK_RIGHT)
+        {
+            player->set_move_direction(MoveDirection::none);
+        }
+    }
+}
+
+void Engine::move()
+{
+    object_container.move_everything();
+}
+
+void Engine::wait()
+{
+    SDL_Delay(16); // ~60 FPS
 }
 
 void Engine::main_loop()
 {
-    while(running)
+    while (running)
     {
-        while(SDL_PollEvent(&event))
+        while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_EVENT_QUIT)
             {
                 running = false;
             }
-            else if (event.type == SDL_EVENT_KEY_DOWN)
-            {
-                if (event.key.key == SDLK_LEFT)
-                {
-                    moveLeft = true;
-                }
-                else if (event.key.key == SDLK_RIGHT)
-                {
-                    moveRight = true;
-                }
-                else if (event.key.key == SDLK_SPACE and life > 0 and ball.vx == 0 and ball.vy == 0)
-                {
-                    ball.vx = BALL_SPEED_X;
-                    ball.vy = BALL_SPEED_Y;
-                }
-            }
+            keyboard_event(event);
         }
+        move();
         render();
-        SDL_Delay(16);  // ~60 FPS
+        wait();
     }
 }
 
