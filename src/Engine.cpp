@@ -104,6 +104,11 @@ void Engine::move()
     object_container.move_everything();
 }
 
+void Engine::collisions()
+{
+    object_container.check_collisions();
+}
+
 void Engine::wait()
 {
     SDL_Delay(16); // ~60 FPS
@@ -121,8 +126,10 @@ void Engine::main_loop()
             }
             keyboard_event(event);
         }
+        collisions();
         move();
         render();
+
         wait();
     }
 }

@@ -13,7 +13,7 @@
 
 constexpr float PADDLE_SPEED = 5.0f;
 constexpr float BALL_SPEED_X = 4.0f;
-constexpr float BALL_SPEED_Y = 4.0f;
+constexpr float BALL_SPEED_Y = -4.0f;
 constexpr float BONUS_SPEED = 4.0f;
 
 struct Speed
@@ -40,6 +40,8 @@ public:
     virtual void move() = 0;
 
     virtual ObjectType get_type() = 0;
+
+    virtual void check_collisions() = 0;
 };
 
 class GameObject : public iGameObject
@@ -50,6 +52,7 @@ public:
     void render(SDL_Renderer *renderer) override;
     void set_speed(Speed new_speed) override;
     void move() override;
+    void check_collisions() override;
 
     ObjectType get_type() override;
 
@@ -66,6 +69,7 @@ enum class MoveDirection : int
     left = 1,
     right = 2
 };
+
 
 class Paddle : public GameObject
 {
@@ -101,6 +105,17 @@ constexpr SDL_Color BonusColors[]{
     {200, 0, 0}
 };
 
+class Ball : public GameObject
+{
+public:
+    Ball(SDL_FRect rectangle, SDL_Color color, Speed speed = {0, 0});
+    void check_collisions() override;
+private:
+    void collision_with_walls();
+    void collission_with_paddle( paddle);
+    void collission_with_bricks();
+};
+
 class Bonus : public GameObject
 {
 public:
@@ -110,28 +125,27 @@ private:
     BonusType bonus_type;
 };
 
-using ObjectContainerVec = std::vector<std::unique_ptr<GameObject> >;
+using ObjectContainerPtr = std::unique_ptr<GameObject>;
+using ObjectContainerVec = std::vector<ObjectContainerPtr>;
 using ObjectContainerMap = std::map<ObjectType, ObjectContainerVec>;
 
 class ObjectContainer
 {
 public:
     ObjectContainer();
-    void init();
 
     void add_object(std::unique_ptr<GameObject> object);
     void render_everything(SDL_Renderer *renderer);
     void move_everything();
+    void add_movable(std::initializer_list<ObjectType> types);
+    void check_collisions();
 
-    //todo: poprawić, żeby było dobrze
     Paddle *get_player();
     GameObject *get_ball();
 
 private:
     ObjectContainerMap container{};
-    Paddle *player;
-    GameObject *ball;
-    std::array<ObjectType, 3> movable{ObjectType::paddle, ObjectType::none, ObjectType::bonus};
+    std::vector<ObjectType> movable{};
 };
 
 #endif //BREAKOUT_GAMEOBJECT_HPP

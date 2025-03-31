@@ -10,11 +10,14 @@ bool Level1::load_level(ObjectContainer &container)
     paddle = std::make_unique<Paddle>(
         Paddle{{350, 550, 100, 20}, {255, 255, 255, 255}, PADDLE_SPEED});
     container.add_object(std::move(paddle));
-    ball = std::make_unique<GameObject>(
-        GameObject{{390, 530, 20, 20}, {255, 0, 0, 255}, ObjectType::ball, {BALL_SPEED_X, BALL_SPEED_Y}});
+
+    ball = std::make_unique<Ball>(
+        Ball{{390, 530, 20, 20}, {255, 0, 0, 255}, {BALL_SPEED_X, BALL_SPEED_Y}});
     container.add_object(std::move(ball));
+
     load_bricks(container);
-    container.init();
+
+    container.add_movable({ObjectType::paddle, ObjectType::ball, ObjectType::bonus});
     return true;
 }
 

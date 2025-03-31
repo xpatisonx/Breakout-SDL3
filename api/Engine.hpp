@@ -37,6 +37,7 @@ private:
 
     void keyboard_event(const SDL_Event& event);
     void move();
+    void collisions();
     void wait();
 };
 

@@ -18,6 +18,11 @@ void GameObject::move()
     rect.y += speed.vy;
 }
 
+void GameObject::check_collisions()
+{
+    // intentionally empty
+}
+
 GameObject::GameObject(SDL_FRect rectangle, SDL_Color color, ObjectType type, Speed speed) : rect(rectangle),
     color(color),
     type(type),
@@ -41,6 +46,55 @@ void Brick::render(SDL_Renderer *renderer)
     GameObject::render(renderer);
 }
 
+Ball::Ball(SDL_FRect rectangle, SDL_Color color, Speed speed) : GameObject(rectangle, color, ObjectType::ball, speed)
+{
+}
+
+void Ball::check_collisions()
+{
+    collision_with_walls();
+    collission_with_paddle();
+    collission_with_bricks();
+}
+
+void Ball::collision_with_walls()
+{
+    // Odbicie od ścian bocznych
+    if (rect.x <= 0 || rect.x + rect.w >= SCREEN_WIDTH)
+    {
+        speed.vx = -speed.vx;
+    }
+
+    // Odbicie od górnej ściany
+    if (rect.y <= 0)
+    {
+        speed.vy = -speed.vy;
+    }
+}
+
+void Ball::collission_with_paddle()
+{
+    if (rect.y + rect.h >= paddle.rect.y &&
+            rect.x + rect.w >= paddle.rect.x &&
+            rect.x <= paddle.rect.x + paddle.rect.w)
+    {
+        float relativeIntersectX = (rect.x + rect.w / 2) - (paddle.rect.x + paddle.rect.w / 2);
+        float normalizeIntersectX = relativeIntersectX / (paddle.rect.w / 2);
+
+        // Kąt odbicia - im dalej od środka, tym bardziej na boki
+        float angle = normalizeIntersectX * (M_PI / 3); // Maksymalnie 60 stopni
+        float new_speed = sqrt(speed.vx * speed.vx + speed.vy * speed.vy);
+
+        speed.vx = new_speed * sin(angle);
+        speed.vy = -new_speed * cos(angle);
+        rect.y = rect.y - rect.h;
+    }
+}
+
+void Ball::collission_with_bricks()
+{
+}
+
 Paddle::Paddle(SDL_FRect rectangle, SDL_Color color, float speed) : GameObject(
     rectangle, color, ObjectType::paddle, {speed, 0.0f})
 {
@@ -56,8 +110,7 @@ void Paddle::move()
     if (move_direction == MoveDirection::right and rect.x + rect.w < SCREEN_WIDTH)
     {
         rect.x += speed.vx;
-    }
-    else if (move_direction == MoveDirection::left and rect.x > 0)
+    } else if (move_direction == MoveDirection::left and rect.x > 0)
     {
         rect.x -= speed.vx;
     }
@@ -76,12 +129,6 @@ Bonus::Bonus(SDL_FRect rectangle) : bonus_type(static_cast<BonusType>(rand() % 2
 
 ObjectContainer::ObjectContainer()
 {
-}
-
-void ObjectContainer::init()
-{
-    player = static_cast<Paddle*>(container[ObjectType::paddle].at(0).get());
-    ball = container[ObjectType::ball].at(1).get();
 }
 
 void ObjectContainer::add_object(std::unique_ptr<GameObject> object)
@@ -104,22 +151,38 @@ void ObjectContainer::render_everything(SDL_Renderer *renderer)
 
 void ObjectContainer::move_everything()
 {
-    for (auto obj_type : movable)
+    for (auto obj_type: movable)
     {
-        ObjectContainerVec& obj_vec = container[obj_type];
-        for (auto& obj : obj_vec)
+        ObjectContainerVec &obj_vec = container[obj_type];
+        for (auto &obj: obj_vec)
         {
             obj->move();
         }
     }
 }
 
-Paddle* ObjectContainer::get_player()
+void ObjectContainer::add_movable(std::initializer_list<ObjectType> types)
 {
-    return player;
+    movable.insert(movable.end(), types.begin(), types.end());
 }
 
-GameObject * ObjectContainer::get_ball()
+void ObjectContainer::check_collisions()
 {
-    return ball;
+    for (auto &[key, vec]: container)
+    {
+        for (auto &obj: vec)
+        {
+            obj->check_collisions();
+        }
+    }
+}
+
+Paddle *ObjectContainer::get_player()
+{
+    return dynamic_cast<Paddle *>(container[ObjectType::paddle].at(0).get());
+}
+
+GameObject *ObjectContainer::get_ball()
+{
+    return container[ObjectType::ball].at(1).get();
 }
