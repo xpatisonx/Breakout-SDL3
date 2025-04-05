@@ -7,14 +7,9 @@
 
 #include <SDL3/SDL.h>
 #include <string>
-#include <GameObject.hpp>
+#include <objects/ObjectContainer.hpp>
 #include <memory>
-#include <map>
-#include <vector>
 #include <Level.hpp>
-
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
 
 class Engine
 {

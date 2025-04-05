@@ -5,7 +5,7 @@
 #ifndef BREAKOUT_ILEVEL_HPP
 #define BREAKOUT_ILEVEL_HPP
 
-#include <GameObject.hpp>
+#include <objects/ObjectContainer.hpp>
 
 class iLevel
 {

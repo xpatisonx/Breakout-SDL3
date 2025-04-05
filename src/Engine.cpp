@@ -3,8 +3,8 @@
 //
 
 #include <Engine.hpp>
+#include <Base.hpp>
 #include <iostream>
-#include <GameObject.hpp>
 
 Engine::Engine() : object_container(), levels()
 {
