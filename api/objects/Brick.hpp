@@ -13,9 +13,13 @@ public:
     Brick(SDL_FRect rectangle, SDL_Color color);
 
     void render(SDL_Renderer *renderer) override;
+    bool is_active();
+    void deactivate();
 
 private:
     bool active;
 };
+
+using brickPtr = std::unique_ptr<Brick>;
 
 #endif //BRICK_HPP

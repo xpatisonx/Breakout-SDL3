@@ -10,6 +10,7 @@
 #include <objects/ObjectContainer.hpp>
 #include <memory>
 #include <Level.hpp>
+#include <GameStats.hpp>
 
 class Engine
 {
@@ -29,6 +30,8 @@ private:
     std::array<std::unique_ptr<iLevel>, 1> levels;
     bool running;
     SDL_Event event;
+    GameStats stats;
+    
 
     void keyboard_event(const SDL_Event& event);
     void move();

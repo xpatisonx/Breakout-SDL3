@@ -6,7 +6,7 @@
 #include <Base.hpp>
 #include <iostream>
 
-Engine::Engine() : object_container(), levels()
+Engine::Engine() : object_container(), levels(), stats()
 {
     std::string message;
     if (!init_sdl(message))

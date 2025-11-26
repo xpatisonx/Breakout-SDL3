@@ -3,6 +3,7 @@
 //
 
 #include <objects/Ball.hpp>
+#include <objects/Brick.hpp>
 #include <Base.hpp>
 #include <cmath>
 
@@ -31,6 +32,20 @@ void Ball::collision_with_walls()
     {
         speed.vy = -speed.vy;
     }
+
+    if (rect.y > SCREEN_HEIGHT and life > 0)
+    {
+        // std::cout << "Game Over! Resetting ball...\n";
+        --life;
+
+        if (life > 0)
+        {
+            rect.x = 390;
+            rect.y = 530;
+        }
+        speed.vx = 0;
+        speed.vy = 0;
+    }
 }
 
 void Ball::collission_with_paddle(Paddle* paddle)
@@ -54,4 +69,41 @@ void Ball::collission_with_paddle(Paddle* paddle)
 
 void Ball::collission_with_bricks(ObjectContainerVec& bricks)
 {
+    // Kolizja z cegiełką
+    for (auto& object: bricks)
+    {
+        auto& brick = reinterpret_cast<brickPtr&>(object);
+        if (brick->is_active() &&
+            rect.x < brick->rect.x + brick->rect.w &&
+            rect.x + rect.w > brick->rect.x &&
+            rect.y < brick->rect.y + brick->rect.h &&
+            rect.y + rect.h > brick->rect.y)
+        {
+            if (rect.x + rect.w - speed.vx <= brick->rect.x ||
+                rect.x - speed.vx >= brick->rect.x + brick->rect.w)
+            {
+                speed.vx = -speed.vx; // Odbicie boczne
+            }
+            else
+            {
+                speed.vy = -speed.vy; // Odbicie pionowe
+            }
+
+            // Usuwamy cegiełkę
+            brick->deactivate(); // Usuwamy cegiełkę
+            // Przyspieszenie
+            //speed.vx *= 1.02f;
+            //speed.vy *= 1.02f;
+
+            // Dodaj punkty
+            //score += 10;
+
+             //   if (rand() % 5 == 0)
+             //   {
+             //       bonuses.push_back({brick.rect, {0, 200, 200}, rand() % 3});
+             //   }
+
+            break; // Tylko jedna cegiełka na klatkę
+            }
+        }
 }

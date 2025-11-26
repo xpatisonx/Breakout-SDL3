@@ -42,13 +42,12 @@ add_executable(Breakout WIN32 src/main.cpp
         src/objects/GameObject.cpp
         src/Engine.cpp
         src/Level.cpp
-        api/objects/Brick.hpp
         src/objects/Brick.cpp
         src/objects/Ball.cpp
         src/objects/Paddle.cpp
         src/objects/Bonus.cpp
         src/objects/ObjectContainer.cpp
-        api/Base.hpp
+        src/GameStats.cpp
 )
 
 # set the include directory
